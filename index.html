@@ -34,6 +34,11 @@
         .rating label:hover~label {
             color: #ffc107;
         }
+
+        .errorMessages {
+            color: red;
+            size: 12pt;
+        }
     </style>
 </head>
 
@@ -45,12 +50,15 @@
             <div class="mb-3">
                 <label for="bookTitle" class="form-label">Book Title</label>
                 <input type="text" class="form-control" id="bookTitle" placeholder="Enter book title" required>
+                <ul id="titleError"></ul>
             </div>
+
 
             <!-- Author -->
             <div class="mb-3">
                 <label for="author" class="form-label">Author</label>
                 <input type="text" class="form-control" id="author" placeholder="Enter author name" required>
+                <ul id="authorError"></ul>
             </div>
 
             <!-- Genre Dropdown -->
@@ -70,42 +78,44 @@
                     <option value="History">History</option>
                     <option value="Self-Help">Self-Help</option>
                 </select>
+                <ul id="genreError"></ul>
+            </div>
+
+            <!-- Status -->
+            <div class="mb-3">
+                <label class="form-label">Progress</label>
+                <div class="form-check">
+                    <input type="radio" name="Progress" id="notStarted" value="Not Started">
+                    <label class="form-check-label" for="notStarted">Not Started</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" name="Progress" id="inProgress" value="In Progress">
+                    <label class="form-check-label" for="inProgress">In Progress</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" name="Progress" id="done" value="Done">
+                    <label class="form-check-label" for="done">Done</label>
+                </div>
+                <ul id="progressError">
             </div>
 
             <!-- Rating -->
             <div class="mb-3">
                 <label class="form-label">Rating</label>
                 <div class="rating">
-                    <input type="radio" class="ratingButton" id="star5" name="rating" value="5" required><label
-                        for="star5"><i class="bi bi-star-fill"></i></label>
-                    <input type="radio" class="ratingButton" id="star4" name="rating" value="4"><label for="star4"><i
+                    <input type="radio" id="star5" name="rating" value="5"><label for="star5"><i
                             class="bi bi-star-fill"></i></label>
-                    <input type="radio" class="ratingButton" id="star3" name="rating" value="3"><label for="star3"><i
+                    <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i
                             class="bi bi-star-fill"></i></label>
-                    <input type="radio" class="ratingButton" id="star2" name="rating" value="2"><label for="star2"><i
+                    <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i
                             class="bi bi-star-fill"></i></label>
-                    <input type="radio" class="ratingButton" id="star1" name="rating" value="1"><label for="star1"><i
+                    <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i
+                            class="bi bi-star-fill"></i></label>
+                    <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i
                             class="bi bi-star-fill"></i></label>
                 </div>
             </div>
 
-            <!-- Status -->
-            <div class="mb-3">
-                <label class="form-label">Status</label>
-                <div class="form-check">
-                    <input class="statusInput" type="radio" name="status" id="notStarted" value="Not Started" checked
-                        required>
-                    <label class="form-check-label" for="notStarted">Not Started</label>
-                </div>
-                <div class="form-check">
-                    <input class="statusInput" type="radio" name="status" id="inProgress" value="In Progress">
-                    <label class="form-check-label" for="inProgress">In Progress</label>
-                </div>
-                <div class="form-check">
-                    <input class="statusInput" type="radio" name="status" id="done" value="Done">
-                    <label class="form-check-label" for="done">Done</label>
-                </div>
-            </div>
 
             <!-- Date of Completion -->
             <div class="mb-3">
@@ -127,38 +137,103 @@
             let button = document.getElementById('submitFormButton');
             button.addEventListener("click", function () {
 
+                // Title cannot be blank
+                let titleEmpty = false;
+
+                // Author cannot be blank
+                let authorEmpty = false;
+
+                // Genre cannot be blank
+                let genreEmpty = false;
+
+                // Status cannot be blank
+                let progressEmpty = false;
+
+                // Allow rating to be empty. read undefined or null.
+
+                // Clear error list
+                let titleError = document.getElementById("titleError");
+                titleError.innerHTML = ''
+
+                let authorError = document.getElementById("authorError");
+                authorError.innerHTML = ''
+
+                let genreError = document.getElementById("genreError");
+                genreError.innerHTML = ''
+
+                let progressError = document.getElementById("progressError");
+                progressError.innerHTML = ''
+
+
                 let bookTitleInput = document.getElementById('bookTitle');
                 let bookTitle = bookTitleInput.value;
+                if (bookTitle == "") {
+                    titleEmpty = true
+                }
 
                 let authorInput = document.getElementById('author');
                 let author = authorInput.value;
+                if (author == "") {
+                    authorEmpty = true
+                }
 
                 let genreInput = document.getElementById('genre');
-                let selectedGenre = genreInput.value
+                let selectedGenre = genreInput.value;
+                if (selectedGenre == "") {
+                    genreEmpty = true
+                }
 
-                let ratingInput = document.querySelector('.ratingButton:checked');
-                let selectedRating = ratingInput.value
+                let ratingInput = document.querySelector('input[name="rating"]:checked');
+                let selectedRating = ratingInput ? ratingInput.value : "Not Rated";
 
-                let statusInput = document.querySelector('.statusInput:checked');
-                let selectedStatus = statusInput.value
+                let progressInput = document.querySelector('input[name="Progress"]:checked');
+                let selectedProgress;
+                if (progressInput == null) {
+                    progressEmpty = true
+                } else {
+                    selectedProgress = progressInput.value
+                }
 
                 let dateInput = document.getElementById('completionDate');
-                let selectedDate = dateInput.value
+                let selectedDate = dateInput.value;
 
+                console.log(titleEmpty);
+                console.log(authorEmpty);
+                console.log(genreEmpty);
+                console.log(progressEmpty);
 
-                console.log(bookTitle)
-                console.log(author)
-                console.log(selectedGenre)
-                console.log(selectedRating)
-                console.log(selectedStatus)
-                console.log(selectedDate)
+                if (titleEmpty == true) {
+                    titleError.innerHTML += '<li class="errorMessages">Title cannot be blank.</li>'
+                }
+
+                if (authorEmpty == true) {
+                    authorError.innerHTML += '<li class="errorMessages">Author cannot be blank.</li>'
+                }
+
+                if (genreEmpty == true) {
+                    genreError.innerHTML += '<li class="errorMessages">Please choose a genre.</li>'
+                }
+
+                if (progressEmpty == true) {
+                    progressError.innerHTML += '<li class="errorMessages">Please indicate your progress.</li>'
+                }
+
+                if (titleEmpty == false &&
+                    authorEmpty == false &&
+                    genreEmpty == false &&
+                    progressEmpty == false
+                ) {
+                    console.log(bookTitle);
+                    console.log(author);
+                    console.log(selectedGenre);
+                    console.log(selectedRating);
+                    console.log(selectedProgress);
+                    console.log(selectedDate);
+                }
+
 
 
             });
-
-
-
-
 
 
 
